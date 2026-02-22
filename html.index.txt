@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ramzan Flood Light Futsal Tournament</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0d1b2a;
+            color: white;
+            text-align: center;
+            margin: 0;
+        }
+
+        h1 {
+            background: gold;
+            color: black;
+            padding: 15px;
+        }
+
+        .tabs button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background: #1b263b;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tabs button:hover {
+            background: gold;
+            color: black;
+        }
+
+        .section {
+            display: none;
+            padding: 20px;
+        }
+
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 90%;
+            background: #1b263b;
+        }
+
+        th, td {
+            border: 1px solid gold;
+            padding: 8px;
+        }
+
+        th {
+            background: gold;
+            color: black;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .bracket {
+            font-size: 18px;
+            line-height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Ramzan Flood Light Futsal Tournament</h1>
+
+<div class="tabs">
+    <button onclick="showSection('groupA')">Group A</button>
+    <button onclick="showSection('groupB')">Group B</button>
+    <button onclick="showSection('groupC')">Group C</button>
+    <button onclick="showSection('groupD')">Group D</button>
+    <button onclick="showSection('knockout')">Knockout</button>
+    <button onclick="showSection('scorers')">Top Scorers</button>
+</div>
+
+<div id="groupA" class="section"></div>
+<div id="groupB" class="section"></div>
+<div id="groupC" class="section"></div>
+<div id="groupD" class="section"></div>
+<div id="knockout" class="section bracket"></div>
+<div id="scorers" class="section"></div>
+
+<script>
+const sheetID = "PASTE_YOUR_SHEET_ID_HERE";
+
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function loadTable(sheetName, elementID) {
+    fetch(https://opensheet.elk.sh/${sheetID}/${sheetName})
+    .then(res => res.json())
+    .then(data => {
+        let table = "<table><tr>";
+        Object.keys(data[0]).forEach(key => {
+            table += <th>${key}</th>;
+        });
+        table += "</tr>";
+
+        data.forEach(row => {
+            table += "<tr>";
+            Object.values(row).forEach(cell => {
+                table += <td>${cell}</td>;
+            });
+            table += "</tr>";
+        });
+
+        table += "</table>";
+        document.getElementById(elementID).innerHTML = table;
+    });
+}
+
+// Load Group Tables
+loadTable("Group A", "groupA");
+loadTable("Group B", "groupB");
+loadTable("Group C", "groupC");
+loadTable("Group D", "groupD");
+
+// Load Top Scorers
+loadTable("Top Scorer Tracker", "scorers");
+
+// Load Knockout Bracket
+fetch(https://opensheet.elk.sh/${sheetID}/Knockout Stage)
+.then(res => res.json())
+.then(data => {
+    let html = "<h2>Knockout Bracket</h2>";
+    data.forEach(row => {
+        html += <div>${Object.values(row).join(" ")}</div>;
+    });
+    document.getElementById("knockout").innerHTML = html;
+});
+
+// Show default tab
+showSection('groupA');
+
+</script>
+
+</body>
+</html>
